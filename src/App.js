@@ -1,18 +1,27 @@
 import './App.css';
 import {useSelector ,  useDispatch } from "react-redux";
-import { useEffect} from "react";
-import { getList } from './store/list/listSlice';
+import { useEffect,useState} from "react";
+import { getList,addList } from './store/list/listSlice';
 import List from './components/List';
 
 function App() {
   const dispatch = useDispatch();
-  const listdata = useSelector((state) => state.list)
+  const listdata = useSelector((state) => state.list);
+  const [listValue, setListValue] = useState('')
   useEffect(() => {
     dispatch(getList())
     },[])
+const onCreate =(e) =>{
+  e.preventDefault();
+  if(listValue){
+    const newList = {content:listValue}  
+    dispatch(addList(newList))
+    setListValue('')
+  }
+}
   return (
     <div className="App">
-      <form>
+      <form onSubmit={onCreate}>
          <h1>{listdata.message}</h1>
          <div>
             {
@@ -23,7 +32,8 @@ function App() {
          <div>
            <input 
            type="text"
-           value='입력된 글자'
+           onChange={(e)=>setListValue(e.target.value)}
+           value={listValue}
            />
            <button type='submit'>목록추가</button>
          </div>
