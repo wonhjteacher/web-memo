@@ -39,6 +39,21 @@ export const  deleteList = createAsyncThunk(
 
 )
 
+export const  updateList = createAsyncThunk(
+    "UPDATE_LIST",
+    async ({ id, content }) => {
+        try {
+            const res  = await axios.put(`http://localhost:8000/list/${id}`,{
+                content:content,
+            });
+            return {id,content};
+        }catch(err){
+            console.log(err)
+        }
+    }
+
+)
+
 const listSlice =  createSlice({
     name: 'list',
     initialState:{
@@ -60,6 +75,12 @@ const listSlice =  createSlice({
           builder.addCase(deleteList.fulfilled, (state,action)=>{
             state.message = '삭제 완료';
             state.data=state.data.filter((ele)=>ele.id !== action.payload)
+          })
+          builder.addCase(updateList.fulfilled, (state,action)=>{
+            state.message = '수정완료';
+            const idx =state.data.findIndex((ele)=>ele.id === action.payload.id)
+            state.data.splice(idx,1,action.payload)
+            
           })
     }
 })
